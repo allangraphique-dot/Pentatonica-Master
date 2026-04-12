@@ -122,31 +122,31 @@ function Metronome() {
   }, []);
 
   return (
-    <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4 flex items-center gap-6 shadow-lg">
+    <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-6 shadow-lg">
       <div className="flex flex-col gap-1">
         <span className="text-[10px] font-mono text-[#555] uppercase tracking-widest">Metrônomo</span>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <button
             onClick={toggleMetronome}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+            className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
               isPlaying 
                 ? 'bg-[#ff4444] text-white shadow-[0_0_15px_rgba(255,68,68,0.4)]' 
                 : 'bg-[#333] text-[#888] hover:bg-[#444] hover:text-white'
             }`}
           >
-            {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="ml-1" />}
+            {isPlaying ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" className="ml-1" />}
           </button>
           
           <div className="flex flex-col">
             <div className="flex items-baseline gap-1">
-              <span className="text-xl font-bold font-mono text-white leading-none">{bpm}</span>
+              <span className="text-2xl font-bold font-mono text-white leading-none">{bpm}</span>
               <span className="text-[10px] font-mono text-[#555]">BPM</span>
             </div>
-            <div className="flex gap-1 mt-1">
+            <div className="flex gap-1.5 mt-2">
               {[0, 1, 2, 3].map((i) => (
                 <div 
                   key={i} 
-                  className={`w-1.5 h-1.5 rounded-full transition-all duration-100 ${
+                  className={`w-2 h-2 rounded-full transition-all duration-100 ${
                     isPlaying && (beat - 1 + 4) % 4 === i 
                       ? (i === 0 ? 'bg-[#ff4444] scale-125 shadow-[0_0_5px_#ff4444]' : 'bg-white scale-125 shadow-[0_0_5px_#fff]') 
                       : 'bg-[#333]'
@@ -158,16 +158,16 @@ function Metronome() {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col gap-2 min-w-[120px]">
+      <div className="flex-1 flex flex-col gap-3 min-w-[120px] justify-center">
         <input
           type="range"
           min="40"
           max="240"
           value={bpm}
           onChange={(e) => setBpm(parseInt(e.target.value))}
-          className="w-full accent-[#ff4444] h-1 bg-[#333] rounded-lg appearance-none cursor-pointer"
+          className="w-full accent-[#ff4444] h-1.5 bg-[#333] rounded-lg appearance-none cursor-pointer"
         />
-        <div className="flex justify-between text-[9px] font-mono text-[#444]">
+        <div className="flex justify-between text-[10px] font-mono text-[#444] px-1">
           <span>40</span>
           <span>140</span>
           <span>240</span>
@@ -212,23 +212,23 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#e0e0e0] font-sans selection:bg-[#ff4444]/30">
       {/* Header */}
-      <header className="border-b border-[#1a1a1a] bg-[#111] p-6 sticky top-0 z-50 shadow-2xl">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <header className="border-b border-[#1a1a1a] bg-[#111] p-4 md:p-6 sticky top-0 z-50 shadow-2xl">
+        <div className="max-w-5xl mx-auto flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#ff4444] flex items-center justify-center shadow-[0_0_15px_rgba(255,68,68,0.4)]">
+            <div className="w-10 h-10 rounded-lg bg-[#ff4444] flex items-center justify-center shadow-[0_0_15px_rgba(255,68,68,0.4)] shrink-0">
               <Music className="text-white w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-white">Pentatônica Master</h1>
-              <p className="text-xs text-[#888] font-mono uppercase tracking-widest">by Allan Krainski</p>
+              <h1 className="text-lg md:text-xl font-bold tracking-tight text-white">Pentatônica Master</h1>
+              <p className="text-[10px] md:text-xs text-[#888] font-mono uppercase tracking-widest">by Allan Krainski</p>
             </div>
           </div>
 
-          <div className="flex flex-col gap-4">
-            <div className="flex bg-[#1a1a1a] p-1 rounded-lg border border-[#2a2a2a]">
+          <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-4 items-start sm:items-center lg:items-end xl:items-center">
+            <div className="flex bg-[#1a1a1a] p-1 rounded-lg border border-[#2a2a2a] w-full sm:w-auto">
               <button
                 onClick={() => setScaleType('minor')}
-                className={`px-4 py-1.5 rounded-md text-xs font-mono uppercase tracking-widest transition-all ${
+                className={`flex-1 sm:flex-none px-4 py-1.5 rounded-md text-[10px] md:text-xs font-mono uppercase tracking-widest transition-all ${
                   scaleType === 'minor' ? 'bg-[#ff4444] text-white shadow-lg' : 'text-[#555] hover:text-[#888]'
                 }`}
               >
@@ -236,7 +236,7 @@ export default function App() {
               </button>
               <button
                 onClick={() => setScaleType('major')}
-                className={`px-4 py-1.5 rounded-md text-xs font-mono uppercase tracking-widest transition-all ${
+                className={`flex-1 sm:flex-none px-4 py-1.5 rounded-md text-[10px] md:text-xs font-mono uppercase tracking-widest transition-all ${
                   scaleType === 'major' ? 'bg-[#ff4444] text-white shadow-lg' : 'text-[#555] hover:text-[#888]'
                 }`}
               >
@@ -244,12 +244,12 @@ export default function App() {
               </button>
             </div>
             
-            <div className="flex flex-wrap gap-2 justify-end">
+            <div className="flex flex-wrap gap-1.5 justify-start sm:justify-end w-full">
               {NOTES.map((note) => (
                 <button
                   key={note}
                   onClick={() => setSelectedKey(note)}
-                  className={`px-3 py-1.5 rounded-md text-sm font-mono transition-all duration-200 border ${
+                  className={`min-w-[32px] md:min-w-[36px] px-2 py-1.5 rounded-md text-xs md:text-sm font-mono transition-all duration-200 border ${
                     selectedKey === note
                       ? 'bg-[#ff4444] border-[#ff4444] text-white shadow-[0_0_10px_rgba(255,68,68,0.3)]'
                       : 'bg-[#1a1a1a] border-[#2a2a2a] text-[#888] hover:border-[#444] hover:text-white'
@@ -263,41 +263,41 @@ export default function App() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto p-6 space-y-12">
+      <main className="max-w-5xl mx-auto p-4 md:p-6 space-y-8 md:y-12">
         {/* Shape Selector */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-mono uppercase tracking-widest text-[#888]">Selecione o Desenho</h2>
-            <div className="flex flex-col items-end gap-1">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <h2 className="text-xs md:text-sm font-mono uppercase tracking-widest text-[#888]">Selecione o Desenho</h2>
+            <div className="flex flex-col items-start sm:items-end gap-1">
               <div className="flex items-center gap-2 text-[10px] text-[#ff4444]/60 font-mono uppercase tracking-wider">
                 <Info size={12} />
                 <span>Padrões de 2 notas por corda</span>
               </div>
-              <div className="text-[10px] text-[#555] text-right max-w-[300px]">
+              <div className="text-[10px] text-[#555] sm:text-right max-w-[300px]">
                 {scaleType === 'minor' 
                   ? '5 formas derivadas da escala menor natural' 
                   : 'Derivada da escala maior natural (sem 4º e 7º graus)'}
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
             {SHAPES.map((shape) => (
               <button
                 key={shape.id}
                 onClick={() => setSelectedShape(shape.id)}
-                className={`p-4 rounded-xl border transition-all text-left group ${
+                className={`p-3 md:p-4 rounded-xl border transition-all text-left group ${
                   selectedShape === shape.id
                     ? 'bg-[#1a1a1a] border-[#ff4444] shadow-[inset_0_0_20px_rgba(255,68,68,0.05)]'
                     : 'bg-[#111] border-[#222] hover:border-[#333]'
                 }`}
               >
-                <span className={`block text-xs font-mono mb-1 ${selectedShape === shape.id ? 'text-[#ff4444]' : 'text-[#555]'}`}>
+                <span className={`block text-[10px] font-mono mb-1 ${selectedShape === shape.id ? 'text-[#ff4444]' : 'text-[#555]'}`}>
                   0{shape.id}
                 </span>
-                <span className={`block font-bold ${selectedShape === shape.id ? 'text-white' : 'text-[#888]'}`}>
+                <span className={`block text-sm md:text-base font-bold ${selectedShape === shape.id ? 'text-white' : 'text-[#888]'}`}>
                   {shape.name}
                 </span>
-                <span className="block text-[10px] text-[#555] mt-1 group-hover:text-[#777] transition-colors">
+                <span className="block text-[10px] text-[#555] mt-1 group-hover:text-[#777] transition-colors leading-tight">
                   {shape.description}
                 </span>
               </button>
@@ -306,26 +306,26 @@ export default function App() {
         </section>
 
         {/* Fretboard Section */}
-        <section className="relative bg-[#111] rounded-2xl border border-[#1a1a1a] p-8 shadow-inner overflow-hidden">
+        <section className="relative bg-[#111] rounded-2xl border border-[#1a1a1a] p-4 md:p-8 shadow-inner overflow-hidden">
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
                style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
 
-          <div className="relative z-10 space-y-8">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-4">
-                <span className="text-2xl font-bold text-white tracking-tight">
+          <div className="relative z-10 space-y-6 md:space-y-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+              <div className="flex items-center gap-3 md:gap-4">
+                <span className="text-xl md:text-2xl font-bold text-white tracking-tight">
                   {selectedKey} <span className="text-[#ff4444]">{scaleType === 'minor' ? 'Menor' : 'Maior'}</span>
                 </span>
                 <div className="h-4 w-px bg-[#222]" />
-                <span className="text-sm text-[#888] font-mono uppercase tracking-widest">
+                <span className="text-xs md:text-sm text-[#888] font-mono uppercase tracking-widest">
                   {SHAPES.find(s => s.id === selectedShape)?.name}
                 </span>
               </div>
               
               <button 
                 onClick={() => setShowNotes(!showNotes)}
-                className="text-[10px] font-mono uppercase tracking-widest px-3 py-1 rounded-full border border-[#222] text-[#555] hover:text-white hover:border-[#444] transition-all"
+                className="w-full sm:w-auto text-[10px] font-mono uppercase tracking-widest px-4 py-2 rounded-full border border-[#222] text-[#555] hover:text-white hover:border-[#444] transition-all text-center"
               >
                 {showNotes ? 'Ver Intervalos' : 'Ver Notas'}
               </button>
