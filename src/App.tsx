@@ -30,12 +30,23 @@ const INTERVAL_NAMES = {
 };
 
 const SHAPES = [
-  { id: 1, name: 'Forma 1', description: 'Inicia na Tônica' },
-  { id: 2, name: 'Forma 2', description: 'Inicia na Terça Menor' },
-  { id: 3, name: 'Forma 3', description: 'Inicia na Quarta Justa' },
-  { id: 4, name: 'Forma 4', description: 'Inicia na Quinta Justa' },
-  { id: 5, name: 'Forma 5', description: 'Inicia na Sétima Menor' },
+  { id: 1, name: 'Forma 1', description: 'Rock Hall of Fame (Raiz na 6ª)' },
+  { id: 2, name: 'Forma 2', description: 'Rock Hall of Fame (Raiz na 5ª)' },
+  { id: 3, name: 'Forma 3', description: 'Smooth Pattern (Raiz na 4ª)' },
+  { id: 4, name: 'Forma 4', description: 'Smooth Pattern (Raiz na 6ª/4ª)' },
+  { id: 5, name: 'Forma 5', description: 'Awkward Pattern (Raiz na 5ª)' },
 ];
+
+// 2 notes per string patterns for each shape (from 6th to 1st string)
+// Offsets are relative to the base fret of the shape (the root position on 6th string for that shape)
+// Based on Gunharth Randolf's "Improvisation Tools"
+const SHAPE_PATTERNS: Record<number, number[][]> = {
+  1: [[0, 3], [0, 2], [0, 2], [0, 2], [0, 3], [0, 3]],
+  2: [[0, 2], [-1, 2], [-1, 2], [-1, 1], [0, 2], [0, 2]],
+  3: [[0, 2], [0, 2], [0, 2], [-1, 2], [0, 3], [0, 2]],
+  4: [[0, 3], [0, 3], [0, 2], [0, 2], [1, 3], [0, 3]],
+  5: [[0, 2], [0, 2], [-1, 2], [-1, 2], [0, 2], [0, 2]],
+};
 
 // --- Helpers ---
 
@@ -187,9 +198,16 @@ export default function App() {
   }, [selectedKey, selectedShape, scaleType]);
 
   const fretRange = useMemo(() => {
-    // Show 5 frets starting from baseFret
-    return Array.from({ length: 5 }, (_, i) => (baseFret + i));
+    // Show 6 frets to accommodate patterns that go back one fret (like Shape 2, 3, 5)
+    return Array.from({ length: 6 }, (_, i) => (baseFret - 1 + i));
   }, [baseFret]);
+
+  const patternIndex = useMemo(() => {
+    // Major shapes are shifted relative to minor shapes
+    // Major Shape 1 is physically the same as Minor Shape 2
+    if (scaleType === 'minor') return selectedShape;
+    return (selectedShape % 5) + 1;
+  }, [selectedShape, scaleType]);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#e0e0e0] font-sans selection:bg-[#ff4444]/30">
@@ -246,30 +264,20 @@ export default function App() {
       </header>
 
       <main className="max-w-5xl mx-auto p-6 space-y-12">
-        {/* Metronome & Quick Controls */}
-        <section className="grid md:grid-cols-2 gap-6 items-end">
-          <Metronome />
-          <div className="hidden md:flex flex-col gap-2 text-right">
-            <p className="text-[10px] font-mono text-[#444] uppercase tracking-[0.2em]">
-              Sincronize seu treino
-            </p>
-            <p className="text-xs text-[#666]">
-              Ajuste o BPM para praticar a precisão rítmica em cada desenho da escala.
-            </p>
-          </div>
-        </section>
-
         {/* Shape Selector */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-mono uppercase tracking-widest text-[#888]">Selecione o Desenho</h2>
-            <div className="flex items-center gap-2 text-xs text-[#555]">
-              <Info size={14} />
-              <span>
+            <div className="flex flex-col items-end gap-1">
+              <div className="flex items-center gap-2 text-[10px] text-[#ff4444]/60 font-mono uppercase tracking-wider">
+                <Info size={12} />
+                <span>Padrões de 2 notas por corda</span>
+              </div>
+              <div className="text-[10px] text-[#555] text-right max-w-[300px]">
                 {scaleType === 'minor' 
                   ? '5 formas derivadas da escala menor natural' 
-                  : 'A escala pentatônica maior é derivada da escala maior diatônica (natural), formada pela remoção do 4º e do 7º graus'}
-              </span>
+                  : 'Derivada da escala maior natural (sem 4º e 7º graus)'}
+              </div>
             </div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
@@ -358,10 +366,15 @@ export default function App() {
                           const interval = getInterval(selectedKey, note, scaleType);
                           const isRoot = interval === 'T';
 
+                          // Check if this fret is one of the 2 notes per string for this shape
+                          const relativeFret = fret - baseFret;
+                          const pattern = SHAPE_PATTERNS[patternIndex][5 - sIdx]; // 5-sIdx because STRINGS is 1st to 6th
+                          const isPartOfShape = pattern.includes(relativeFret);
+
                           return (
                             <div key={fIdx} className="flex-1 h-12 relative flex items-center justify-center border-r border-[#222]">
                               <AnimatePresence mode="wait">
-                                {interval && (
+                                {interval && isPartOfShape && (
                                   <motion.div
                                     initial={{ scale: 0, opacity: 0 }}
                                     animate={{ scale: 1, opacity: 1 }}
@@ -388,53 +401,11 @@ export default function App() {
           </div>
         </section>
 
-        {/* Legend & Info */}
+        {/* Metronome & Dicas */}
         <section className="grid md:grid-cols-2 gap-8">
-          <div className="bg-[#111] rounded-2xl border border-[#1a1a1a] p-6 space-y-4">
-            <h3 className="text-sm font-mono uppercase tracking-widest text-[#888]">Legenda de Intervalos</h3>
-            <div className="grid grid-cols-1 gap-3">
-              {scaleType === 'minor' ? (
-                [
-                  { label: 'T', name: 'Tônica', desc: 'A nota fundamental da escala.' },
-                  { label: 'b3', name: 'Terça Menor', desc: 'Define o caráter menor (3 semitons).' },
-                  { label: '4', name: 'Quarta Justa', desc: 'Intervalo de repouso (5 semitons).' },
-                  { label: '5', name: 'Quinta Justa', desc: 'Estabilidade (7 semitons).' },
-                  { label: 'b7', name: 'Sétima Menor', desc: 'Tensão característica (10 semitons).' },
-                ].map((item) => (
-                  <div key={item.label} className="flex items-center gap-4 p-2 rounded-lg hover:bg-[#1a1a1a] transition-colors">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                      item.label === 'T' ? 'bg-[#ff4444] text-white' : 'bg-[#2a2a2a] text-[#ccc]'
-                    }`}>
-                      {item.label}
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-white">{item.name}</p>
-                      <p className="text-[10px] text-[#555]">{item.desc}</p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                [
-                  { label: 'T', name: 'Tônica', desc: 'A nota fundamental da escala.' },
-                  { label: '2', name: 'Segunda Maior', desc: 'Intervalo de passagem (2 semitons).' },
-                  { label: '3', name: 'Terça Maior', desc: 'Define o caráter maior (4 semitons).' },
-                  { label: '5', name: 'Quinta Justa', desc: 'Estabilidade (7 semitons).' },
-                  { label: '6', name: 'Sexta Maior', desc: 'Brilho característico (9 semitons).' },
-                ].map((item) => (
-                  <div key={item.label} className="flex items-center gap-4 p-2 rounded-lg hover:bg-[#1a1a1a] transition-colors">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                      item.label === 'T' ? 'bg-[#ff4444] text-white' : 'bg-[#2a2a2a] text-[#ccc]'
-                    }`}>
-                      {item.label}
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-white">{item.name}</p>
-                      <p className="text-[10px] text-[#555]">{item.desc}</p>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
+          <div className="space-y-4">
+            <h3 className="text-sm font-mono uppercase tracking-widest text-[#888]">Metrônomo</h3>
+            <Metronome />
           </div>
 
           <div className="bg-[#111] rounded-2xl border border-[#1a1a1a] p-6 space-y-4">
@@ -454,7 +425,7 @@ export default function App() {
               </li>
               <li className="flex gap-3">
                 <span className="text-[#ff4444] font-mono">04.</span>
-                <span>Use um metrônomo para garantir que seu tempo esteja firme.</span>
+                <span>Use o metrônomo para garantir que seu tempo esteja firme.</span>
               </li>
             </ul>
           </div>
