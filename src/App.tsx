@@ -308,7 +308,7 @@ export default function App() {
         {/* Fretboard Section */}
         <section className="relative bg-[#111] rounded-2xl border border-[#1a1a1a] p-4 md:p-8 shadow-inner overflow-hidden">
           {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+          <div className="absolute inset-0 opacity-[0.06] pointer-events-none" 
                style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
 
           <div className="relative z-10 space-y-6 md:space-y-8">
@@ -335,27 +335,27 @@ export default function App() {
             <div className="relative overflow-x-auto pb-4 scrollbar-hide">
               <div className="min-w-[600px] relative">
                 {/* Fret Numbers */}
-                <div className="flex mb-2">
+                <div className="flex mb-3">
                   <div className="w-12" /> {/* Nut space */}
                   {fretRange.map((fret) => (
-                    <div key={fret} className="flex-1 text-center text-[10px] font-mono text-[#444]">
+                    <div key={fret} className="flex-1 text-center text-[11px] font-mono font-bold text-[#888]">
                       {fret === 0 ? 'NUT' : fret}
                     </div>
                   ))}
                 </div>
 
                 {/* Strings */}
-                <div className="relative border-l-4 border-[#333]">
+                <div className="relative border-l-4 border-[#666]">
                   {STRINGS.map((string, sIdx) => (
                     <div key={sIdx} className="relative h-12 flex items-center group">
                       {/* String Line */}
                       <div 
-                        className="absolute w-full bg-gradient-to-r from-[#333] via-[#444] to-[#333] shadow-sm" 
-                        style={{ height: `${1 + (5 - sIdx) * 0.5}px` }} 
+                        className="absolute w-full bg-gradient-to-r from-[#555] via-[#888] to-[#555] shadow-sm" 
+                        style={{ height: `${1.5 + (5 - sIdx) * 0.5}px` }} 
                       />
                       
                       {/* String Label */}
-                      <div className="w-12 text-xs font-mono text-[#666] flex items-center justify-center bg-[#111] z-10">
+                      <div className="w-12 text-xs font-mono font-bold text-[#aaa] flex items-center justify-center bg-[#111] z-10">
                         {string.note}
                       </div>
 
@@ -372,7 +372,7 @@ export default function App() {
                           const isPartOfShape = pattern.includes(relativeFret);
 
                           return (
-                            <div key={fIdx} className="flex-1 h-12 relative flex items-center justify-center border-r border-[#222]">
+                            <div key={fIdx} className="flex-1 h-12 relative flex items-center justify-center border-r border-[#444]">
                               <AnimatePresence mode="wait">
                                 {interval && isPartOfShape && (
                                   <motion.div
